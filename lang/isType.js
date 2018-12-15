@@ -1,0 +1,1 @@
+module.exports = t => o => Object.prototype.toString.call(o).slice(8).slice(0,-1).toLowerCase() == t.toLowerCase()
