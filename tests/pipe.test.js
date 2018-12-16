@@ -15,7 +15,7 @@ test("Empty pipes should also be callable and return to themselves",function(){
     expect(pipe()('x')).to.eq("x")
 })
 
-test("Pipeline will accept any function that accepts any parameter", function(){
+test("Pipe will accept any function that accepts any parameter", function(){
     const addfor = base => (...nums) => nums.map((v, i, a) => v + base)
     const multfor = base => (...nums) => nums.map((v, i, a) => v * base)
     
@@ -31,10 +31,10 @@ test("Pipeline will accept any function that accepts any parameter", function(){
 
 test("Should can wrap promise objects asynchronously",function(){
     // TODO
-    TODO()
+    TODO("As long as there is a promise object in the parameter list, the final result will also be a promise object.")
 })
 
 test("If generator is in pipeline, it will be called asynchronously as a partial function that accepts many parameters",function(){
     // TODO
-    TODO()
+    TODO("Generator will be wrapped as a promise before processing, so the last thing returned is also a promise object.")
 })
