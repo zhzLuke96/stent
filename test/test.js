@@ -1,7 +1,5 @@
-const isBrowser = (()=>{
-    let root = typeof self == 'object' && self.self === self && self || typeof global == 'object' && global.global === global && global || this;
-    return ({}).toString.call(root) == "[object Window]"
-})()
+const {getStackTrace} = require("./StackTrace.js")
+const isBrowser = require("../lang/isBrowser.js")
 const print = {
     warn:(()=>{
         if(isBrowser)return console.warn;
@@ -18,6 +16,10 @@ const print = {
     success:(()=>{
         if(isBrowser)return console.log
         else return (...args)=>console.log("\x1B[32m",...args,"\x1B[39m");
+    })(),
+    second:(()=>{
+        if(isBrowser)return console.log
+        else return (...args)=>console.log("\x1B[35m",...args,"\x1B[39m");
     })()
 }
 
@@ -32,9 +34,11 @@ const test = function (describe, target) {
             print.error("=>", e.message)
             print.error("=>", e.stack.split(/\n+/)[4].trim())
         }else{
-            switch(e){
-                case "0": // todo case
-                    print.warn("* " , describe, ", TODO!")
+            switch(e.code){
+                case "0",0: // todo case
+                    print.info("* " ,"<TODO>",e.stack)
+                    print.second("=>" , "CASE:", describe)
+                    if(e.msgs.length != 0)print.warn("~ ", ...e.msgs)
                     break;
                 default:
                     print.warn("? "," UNKNOWN!")
@@ -42,11 +46,15 @@ const test = function (describe, target) {
         }
     }
 }
-const TODO = ()=>{throw "0"}
+const todo_caller = (...msgs)=>{throw {
+    code: 0,
+    stack: getStackTrace(4),
+    msgs: msgs
+}}
 
 if (typeof module != "undefined" && module.exports) {
     module.exports = {
         test,
-        TODO
+        TODO:todo_caller
     }
 }

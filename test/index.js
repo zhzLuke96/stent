@@ -1,6 +1,7 @@
 const {
     test,
-    TODO
+    TODO,
+    MESSAGE
 } = require("./test.js")
 const {
     expect
@@ -8,5 +9,6 @@ const {
 module.exports = {
     test,
     expect,
-    TODO
+    TODO,
+    MESSAGE
 }

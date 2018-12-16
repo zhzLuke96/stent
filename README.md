@@ -12,5 +12,7 @@ js本身的一些操作，比如最基础的curry、pipe函数工具
 # test
 做事做全套嘛，根据理解和魔改，写了个简单的BDD风格测试工具
 
+![test.png](./docs/test.png)
+
 # tests
 各个模块的测试用例
