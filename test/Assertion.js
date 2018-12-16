@@ -1,3 +1,4 @@
+// const {getStackTrace} = require("./StackTrace.js")
 const identify = x => x
 
 class Assertion {
