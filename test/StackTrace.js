@@ -4,7 +4,8 @@ const getStackTrace = (()=>{
         return function(level=1){
             var ret = {}
             Error.captureStackTrace(ret, getStackTrace)
-            return ret.stack.split(/\n+/)[level].trim()
+            if(level>=0)return ret.stack.split(/\n+/)[level].trim()
+            return ret.stack
         }
     }else{
         // other browser
@@ -12,7 +13,8 @@ const getStackTrace = (()=>{
             try {
                 throw new Error()
             } catch (e) {
-                return e.stack.split(/\n+/)[level].trim()
+                if(level>=0)return e.stack.split(/\n+/)[level].trim()
+                return e.stack
             }
         }
     }

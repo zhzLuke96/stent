@@ -25,14 +25,17 @@ class expect extends chained {
     constructor(actual) {
         super()
         this.assert = new Assertion(actual)
-        this.init()
+        this.initRouter()
     }
-    init() {
+    initRouter() {
         this.addRouter("to", o => o)
         this.addRouter("be", o => o)
+        this.addRouter("is", o => o)
         this.addRouter("should", o => o)
         this.addRouter("not", o => {
-            o.assert.addProcess(c => !c)
+            o.assert.addProcess(c =>{
+                return !c
+            }, false)
             return o
         })
         this.addRouter("keys", o => {
@@ -47,6 +50,7 @@ class expect extends chained {
             o.assert.addProcess(c => flatten(c))
             return o
         })
+        this.addRouter("promise", o => o)
     }
     tail(__expect, process,prop) {
         this.assert.expect = __expect
@@ -71,7 +75,8 @@ class expect extends chained {
     has(...props) {
         this.tail(props, actual => {
             for (const p of props) {
-                if (p in actual) continue
+                if (getType(actual) == "object" && p in props)continue
+                if (actual.indexOf(p) != -1 || actual.indexOf(String(p)) != -1) continue
                 return false
             }
             return true

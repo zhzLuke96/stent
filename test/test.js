@@ -23,16 +23,23 @@ const print = {
     })()
 }
 
+const put_err_info = (describe,e,allerrorinfo,level=5)=>{
+    print.info("× ", describe, ", error :")
+    print.error("=>", e.message)
+    if(allerrorinfo){                
+        print.error("=>", e.stack)
+    }else{
+        print.error("=>", e.stack.split(/\n+/)[level].trim())
+    }
+}
 
-const test = function (describe, target) {
+const test = function (describe, target, allerrorinfo=false) {
     try {
         target()
         print.success("√ ", describe, ", done!")
     } catch (e) {
         if(e instanceof Error){
-            print.info("× ", describe, ", error :")
-            print.error("=>", e.message)
-            print.error("=>", e.stack.split(/\n+/)[4].trim())
+            put_err_info(describe,e,allerrorinfo)
         }else{
             switch(e.code){
                 case "0",0: // todo case

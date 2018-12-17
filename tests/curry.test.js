@@ -12,7 +12,7 @@ const {
 test("Partial function should accept parameters but do not process them", function () {
     const add = (a, b) => a + b
     var add2 = partial(add,2)
-    expect(add2(2)).to.eq(4)
+    expect(add2(2)).to.be.eq(4)
     expect(add2(0)).to.eq(2)
     expect(add2(0,0,0)).to.eq(2)
     expect(add2(0,1,2)).to.eq(2)
@@ -68,7 +68,7 @@ test("Decorated function of behavior should not be changed", function(){
 
     var tRE = /hello/ig
     var mHello = cmatch(tRE)
-    expect(mHello("hello")).to.be.has("0")
+    expect(mHello("hello")).to.be.keys.has("0")
     expect(mHello("hello")).should.to.be.eq(match(tRE,"hello"))
     expect(mHello("hEllo")).to.lengthOf(1)
     expect(mHello("hEllo")).should.to.be.eq(match(tRE,"hEllo"))
@@ -90,6 +90,6 @@ test("Decorated function of behavior should not be changed", function(){
     var someArr = [1,2,3,4,5,6,7,8,9]
 
     expect(feven(someArr)).should.to.eq(filter(isEven, someArr))
-    expect(feven(someArr)).to.has(2,4)
-    expect(feven(someArr)).not.has(5,9)
+    expect(feven(someArr)).to.not.has(2,4)
+    expect(feven(someArr)).to.has(5,9)
 })
