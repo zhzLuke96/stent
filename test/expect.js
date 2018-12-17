@@ -28,59 +28,91 @@ class expect extends chained {
         this.initRouter()
     }
     initRouter() {
-        this.addRouter("to", o => o)
-        this.addRouter("be", o => o)
-        this.addRouter("is", o => o)
-        this.addRouter("should", o => o)
+        this.addRouter("to", o => {
+            this.assert.msg += "to "
+            return o
+        })
+        this.addRouter("a", o => {
+            this.assert.msg += "a "
+            return o
+        })
+        this.addRouter("an", o => {
+            this.assert.msg += "an "
+            return o
+        })
+        this.addRouter("be", o => {
+            this.assert.msg += "be "
+            return o
+        })
+        this.addRouter("is", o => {
+            this.assert.msg += "is "
+            return o
+        })
+        this.addRouter("should", o => {
+            // this.assert.msg += "should "
+            return o
+        })
         this.addRouter("not", o => {
             o.assert.addProcess(c =>{
                 return !c
-            }, false)
+            }, "not", false)
             return o
         })
         this.addRouter("keys", o => {
-            o.assert.addProcess(c => Object.keys(c))
+            o.assert.addProcess(c => Object.keys(c),"keys")
             return o
         })
         this.addRouter("values", o => {
-            o.assert.addProcess(c => Object.values(c))
+            o.assert.addProcess(c => Object.values(c),"values")
             return o
         })
         this.addRouter("deep", o => {
-            o.assert.addProcess(c => flatten(c))
+            o.assert.flag["deep"] = true
+            o.assert.addProcess(c => flatten(c),"deep")
             return o
         })
-        this.addRouter("promise", o => o)
+        this.addRouter("all", o => {
+            o.assert.flag["all"] = true
+            return o
+        })
     }
-    tail(__expect, process,prop) {
+    tail(__expect, process, msg ,prop) {
+        msg = msg || __expect
         this.assert.expect = __expect
         this.assert.prop = prop
-        this.assert.addProcess(process)
+        this.assert.addProcess(process, msg)
         this.assert.catch()
     }
     eq(__expect) {
         this.tail(__expect, actual => {
+            if (this.assert.flag["deep"])__expect = flatten(__expect,{})
             if (getType(actual) != getType(__expect)) return false
             if (getType(actual) == "array" || getType(actual) == "object") {
                 if (actual.length && actual.length != __expect.length) return false
                 for (const key in actual) {
                     if (!__expect.hasOwnProperty(key)) return false
-                    if (actual[key] != __expect[key]) return false
-                }
+                    var a= actual[key],
+                        e = __expect[key]
+                    if ( getType(a) != "array" && getType(a) != "object" && a != e)return false
+                } 
                 return true
             }
             return actual == __expect;
-        })
+        }, "equal")
     }
     has(...props) {
         this.tail(props, actual => {
             for (const p of props) {
-                if (getType(actual) == "object" && p in props)continue
-                if (actual.indexOf(p) != -1 || actual.indexOf(String(p)) != -1) continue
+                if (getType(actual) == "object" && p in props)
+                    if(this.assert.flag["all"])continue
+                    else return true
+                if (actual.indexOf(p) != -1 || actual.indexOf(String(p)) != -1)
+                    if(this.assert.flag["all"])continue
+                    else return true
                 return false
             }
             return true
-        })
+        }, "has")
     }
     throw (type) {
         this.tail(type, actual => {
@@ -89,7 +121,7 @@ class expect extends chained {
             } catch (error) {
                 return error instanceof type;
             }
-        })
+        },"Throw Error")
     }
     ok() {
         this.tail("ok", actual => actual == true)
@@ -116,19 +148,20 @@ class expect extends chained {
         this.tail("empty", actual => actual.length && actual.length === 0)
     }
     within(min, max) {
-        this.tail(`within [${min}~${max}]`, actual => actual >= min && actual <= max)
+        this.tail(`[${min}~${max}]`, actual => actual >= min && actual <= max, "within")
     }
     type(t) {
-        this.tail(`type ${t}`, actual => getType(actual) == t.toLowerCase())
+        this.tail(`${t}`, actual => getType(actual) == t.toLowerCase(),"typeOf")
     }
     lengthOf(l) {
-        this.tail(`lengthOf ${l}`, actual => actual.length === l, "length")
-    }
+        this.tail(`${l}`, actual => actual.length === l,"lengthOf" , "length")
+    } 
     match(re) {
-        this.tail(`match ${re}`, actual => re.test(actual))
+        this.tail(`${re}`, actual => re.test(actual), "match")
     }
-    oneOf(arr) {
-        this.tail(`match ${re}`, actual => actual in arr)
+    oneOf(...args) {
+        this.tail(`${args}`, actual => {
+            return actual in args}, "oneOf")
     }
 }
 

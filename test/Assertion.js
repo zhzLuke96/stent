@@ -10,20 +10,22 @@ class Assertion {
         this.prop = undefined
         this.flow_stack = [identify]
         this.back_stack = []
+        this.flag = {}
         this.msg = ""
     }
-    addProcess(fn, front = true) {
+    addProcess(fn, tmsg, front = true) {
+        if(tmsg)this.msg += tmsg + " "
         if(front)this.flow_stack.push(fn)
         else this.back_stack.push(fn)
     }
     dump(){
         var flow = this.actual
-        while(this.flow_stack.length!=0)flow = this.flow_stack.pop()(flow)
-        while(this.back_stack.length!=0)flow = this.back_stack.pop()(flow)
+        while(this.flow_stack.length!=0)flow = this.flow_stack.shift()(flow)
+        while(this.back_stack.length!=0)flow = this.back_stack.shift()(flow)
         return flow
     }
     __throw() {
-        var msg = `should (${this.expect}) but (${this.prop ? this.actual[this.prop] : this.actual}).`
+        var msg = `expect should ${this.msg}(${this.expect}) but it's (${this.prop ? this.actual[this.prop] : this.actual}).`
         return new Error(msg)
     }
     catch () {

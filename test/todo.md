@@ -1,2 +1,1 @@
-- all.has
-- throw option path
+- 

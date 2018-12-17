@@ -5,8 +5,8 @@ const push = o => Array.prototype.push.bind(o)
 // 因为test里用到，这个库就没有flatten.test.js
 
 // {x:1} =>
-function flatten(obj,isOwn=true){
-    var ret = Object.create(null)
+function flatten(obj,base,isOwn=true){
+    var ret = base?base : Object.create(null)
     function inner(o){
         for (const key in o) {
             if (!isOwn || o.hasOwnProperty(key)) {
