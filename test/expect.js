@@ -83,6 +83,9 @@ class expect extends chained {
         this.assert.addProcess(process, msg)
         this.assert.catch()
     }
+    called(){
+        this.tail("", () => true, "called")
+    }
     eq(__expect) {
         this.tail(__expect, actual => {
             if (this.assert.flag["deep"])__expect = flatten(__expect,{})
