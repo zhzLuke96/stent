@@ -11,6 +11,7 @@ function loadJx(xx) {
             if (e.index != 1) stack.push([0, sx.slice(0, e.index)])
             if (e[0][2] == "=") stack.push([2, e[1].slice(1)])
             else if (e[0][2] == "$") stack.push([3, e[1].slice(1)])
+            else if (e[0][2] == "*") stack.push([4, e[1].slice(1)])
             else stack.push([1, e[1]])
             inner(sx.slice(e.index + e[0].length))
         }
@@ -22,19 +23,22 @@ function loadJx(xx) {
 function compile(stack) {
     let code = ""
     for (const row of stack) {
+        let content = row[1].trim()
         switch (row[0]) {
             case 0:
-                code += `yield \`${row[1].trim()}\`;`
+                code += `yield \`${content}\`;`
                 break;
             case 1: // command
-                code += `${row[1]}\n`
+                code += `${content}\n`
                 break;
-            case 2: // get values
-                code += `yield ${row[1].trim()};`
+            case 2: // = get values
+                code += `yield ${content};`
                 break;
-            case 3: // tpl called
-                code += `yield $${row[1].trim()};`
+            case 3: // $ tpl called
+                code += `yield $${content};`
                 break;
+            case 4: // * callee
+                code += `yield* arguments.callee(${content});`
             default:
                 break;
         }
