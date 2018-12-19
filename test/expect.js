@@ -118,10 +118,11 @@ class expect extends chained {
         }, "has")
     }
     throw (type) {
-        this.tail(type, actual => {
+        this.tail(type().toString(), actual => {
             try {
                 actual()
             } catch (error) {
+                this.assert.actual = error
                 return error instanceof type;
             }
         },"Throw Error")
@@ -155,6 +156,9 @@ class expect extends chained {
     }
     type(t) {
         this.tail(`${t}`, actual => getType(actual) == t.toLowerCase(),"typeOf")
+    }
+    typeOf(t) {
+        this.tail(`${t}`, actual => actual instanceof t,"type is")
     }
     lengthOf(l) {
         this.tail(`${l}`, actual => actual.length === l,"lengthOf" , "length")
