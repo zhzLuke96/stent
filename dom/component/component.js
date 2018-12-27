@@ -55,7 +55,6 @@ function tplLoader(text) {
 }
 
 creatCustomEle("x-import","<style>:host{display:none;}</style>",{
-    name: "x-import",
     init() {
         readText(this.getAttribute("from"))
             .then(text=>tplLoader(text))
